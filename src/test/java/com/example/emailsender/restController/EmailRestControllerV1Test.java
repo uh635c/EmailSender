@@ -1,7 +1,7 @@
 package com.example.emailsender.restController;
 
 import com.example.emailsender.model.dto.EmailDto;
-import com.example.emailsender.service.EmailService;
+import com.example.emailsender.service.impl.EmailServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 public class EmailRestControllerV1Test {
@@ -27,7 +26,7 @@ public class EmailRestControllerV1Test {
     private MockMvc mockMvc;
 
     @MockBean
-    private EmailService emailServiceMock;
+    private EmailServiceImpl emailServiceMock;
 
     private EmailDto emailDto;
 
@@ -56,7 +55,10 @@ public class EmailRestControllerV1Test {
                                 "\"emailSubject\":\"subject\"}"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonExpected));
+                .andExpect(jsonPath("$.emailFrom").value("mail_sender1@example.com"))
+                .andExpect(jsonPath("$.emailTo").value("email_reciver1@example.com"))
+                .andExpect(jsonPath("$.emailSubject").value("subject"))
+                .andExpect(jsonPath("$.emailText").value("emails body text"));
 
         emailDto.setId(null);
         Mockito.verify(emailServiceMock).sendEmail(emailDto);

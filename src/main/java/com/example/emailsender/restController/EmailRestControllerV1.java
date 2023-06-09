@@ -24,14 +24,13 @@ public class EmailRestControllerV1 {
     public ResponseEntity<EmailDto> sendEmail(@RequestBody @Valid EmailDto emailDto) {
 
         if (emailDto == null) {
-            log.info("Input emailDto is null");
+            log.warn("Input emailDto is null");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         EmailDto emailDtoSent = emailService.sendEmail(emailDto);
 
         if (emailDtoSent == null) {
-            log.info("Sending email is failed");
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
 
@@ -42,14 +41,14 @@ public class EmailRestControllerV1 {
     @GetMapping("/emails")
     public ResponseEntity<List<EmailDto>> getEmails(@RequestBody EmailFromDto emailFromDto) {
         if (emailFromDto == null) {
-            log.info("Input emailFromDto is null");
+            log.warn("Input emailFromDto is nul");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         List<EmailDto> listEmails = emailService.getEmails(emailFromDto.getEmailFrom());
 
         if (listEmails.isEmpty()) {
-            log.info("List is empty for provided {} email", emailFromDto.getEmailFrom());
+            log.warn("List is empty for provided {} email", emailFromDto.getEmailFrom());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

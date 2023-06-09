@@ -5,4 +5,7 @@ create table if not exists emails (
     subject varchar(50) not null,
     text varchar(50) not null,
     primary key(id)
-    );
+);
+
+create index idx_emailfrom
+    on emails (emailFrom);

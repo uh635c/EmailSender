@@ -8,21 +8,26 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
+@Slf4j
 public class SendGridService {
 
+    @Autowired
+    private SendGrid sg;
+
     public Boolean sendEmail(EmailDto emailDto) {
+
         Email from = new Email(emailDto.getEmailFrom());
         String subject = emailDto.getEmailSubject();
         Email to = new Email(emailDto.getEmailTo());
         Content content = new Content("text/plain", emailDto.getEmailText());
         Mail mail = new Mail(from, subject, to, content);
-
-        SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
 
         Request request = new Request();
         try {
@@ -34,13 +39,12 @@ public class SendGridService {
             if (response.getStatusCode() == 200 || response.getStatusCode() == 201) {
                 return true;
             }
+            log.warn("An email has not been sent: {}", response.getBody());
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.error("Exception during sending an email: {}", ex, ex.getMessage());
         }
 
         return false;
     }
-
-
 }
